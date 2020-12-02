@@ -1,0 +1,68 @@
+#!/bin/bash
+command=$1
+if [ "$command" = "install" ]; then
+	package=$2
+	dependencies=""
+	packagenum=0
+	dlsize=0
+	installsize=0
+	alldependencies=`apt-cache depends --recurse --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances $package | grep "^\w" | sort -u | cut -d: -f1`
+	alliterations=`echo $alldependencies | wc -w`
+	rm -rf ./debs
+	rm -rf ./dd
+	mkdir debs
+	mkdir dd
+	cd debs
+	iteration=0
+	tput sc
+	printf "Analyse des dépendances (0/$alliterations)"
+	for dependence in $alldependencies; do
+		isdependenceinstalled=`dpkg-query --list | grep -i $dependence`
+		iteration=`expr $iteration + 1`
+		tput rc;tput el
+		printf "Analyse des dépendances ($iteration/$alliterations)"
+		if [ "$isdependenceinstalled" = "" ]; then
+			pkgdlsize=`apt-cache show --no-all-versions $dependence | grep ^Size | cut -d':' -f2 | xargs`
+			pkginstallsize=`apt-cache show --no-all-versions $dependence | grep ^Installed-Size | cut -d':' -f2 | xargs`
+			if [ "$dependencies" = "" ]; then
+				dependencies="$dependence"
+				packagenum=1
+				dlsize="$pkgdlsize"
+				installsize="$pkginstallsize"
+			else
+				dependencies="$dependencies $dependence"
+				packagenum=`expr $packagenum + 1`
+				dlsize=`expr $pkgdlsize + $dlsize`
+				installsize=`expr $pkginstallsize + $installsize`
+			fi
+		fi
+	done
+	pkgdlsize=`apt-cache show --no-all-versions $package | grep ^Size | cut -d':' -f2 | xargs`
+	pkginstallsize=`apt-cache show --no-all-versions $package | grep ^Installed-Size | cut -d':' -f2 | xargs`
+	dlsize=`expr $dlsize + $pkgdlsize`
+	installsize=`expr $installsize + $pkginstallsize`
+	dlsize=`expr $dlsize / 1048576`
+	installsize=`expr $installsize / 1024`
+	echo ""
+	echo "Les paquets suivants seront installés :"
+	echo "$package $dependencies"
+	echo "$packagenum paquets à installer."
+	echo "Il est nécessaire de prendre $dlsize Mo dans les archives."
+	echo "Après cette opération, $installsize Mo d'espace disque supplémentaire seront utilisés."
+	read -p "Souhaitez-vous continuer ? [O/n] " acceptInstall
+	if [ "$acceptInstall" = "" ] || [ "$acceptInstall" = "O" ] || [ "$acceptInstall" = "o" ]; then
+		apt download $package $dependencies
+		cd ..
+		for f in `ls -C debs/`; do
+			dpkg-deb -x debs/$f ./dd/
+		done
+		cp dd/usr/* -r ~/.local/
+		rm -rf ./debs > /dev/null
+		rm -rf ./dd > /dev/null
+	else
+		cd ..
+		echo "Annulation."
+		rm -rf ./debs > /dev/null
+		rm -rf ./dd > /dev/null
+	fi
+fi

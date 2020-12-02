@@ -1,0 +1,2 @@
+#!/bin/bash
+wget -q -O portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt | chmod +x portableapt | mv portableapt $HOME/.local/bin/
