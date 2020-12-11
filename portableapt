@@ -99,7 +99,7 @@ elif [ "$command" = "remove" ]; then
 		for f in `find */* -print`; do
 			rm -rf $HOME/.local/$f
 		done
-		cd ..
+		cd ../..
 		rm -rf ./debs > /dev/null
 		rm -rf ./dd > /dev/null
 	else
@@ -109,7 +109,9 @@ elif [ "$command" = "remove" ]; then
 		rm -rf ./dd > /dev/null
 	fi
 elif [ "$command" = "portable-upgrade" ]; then
+  echo "Upgrading portableapt..."
   wget -qO - https://github.com/DocSystem/portableapt/raw/main/upgrade | bash -
+  echo "portableapt was successfully upgraded"
 else
 	echo "portableapt 0.2b (all)"
 	echo "Usage : portableapt commande"
