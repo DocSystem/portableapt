@@ -1,4 +1,7 @@
 #!/bin/bash
+if test -f $HOME/.local/bin/portableapt; then
+  rm -f $HOME/.local/bin/portableapt
+fi
 echo "Setting up Portable APT..."
 mkdir -p $HOME/.local/{bin,games,lib}
 wget -q -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt
