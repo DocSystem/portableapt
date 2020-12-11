@@ -1,7 +1,18 @@
 #!/bin/bash
 command=$1
-if [ "$command" = "install" ]; then
-	package=$2
+arguments=""
+for arg in $@; do
+  arguments="$arguments $arg"
+done
+arguments=`$arguments | cut -d" " --complement -f1`
+if [ "$command" = "list" ]; then
+	apt list
+elif [ "$command" = "search" ]; then
+	apt search $2
+elif [ "$command" = "show" ]; then
+	apt show $2
+elif [ "$command" = "install" ]; then
+	package=$arguments
 	dependencies=""
 	packagenum=0
 	dlsize=0
@@ -65,4 +76,53 @@ if [ "$command" = "install" ]; then
 		rm -rf ./debs > /dev/null
 		rm -rf ./dd > /dev/null
 	fi
+elif [ "$command" = "remove" ]; then
+	package=$arguments
+	rm -rf ./debs
+	rm -rf ./dd
+	mkdir debs
+	mkdir dd
+	cd debs
+	echo "Les paquets suivants seront désinstallés :"
+	echo "$package"
+	echo "1 paquet à désinstaller."
+	read -p "Souhaitez-vous continuer ? [O/n] " acceptInstall
+	if [ "$acceptInstall" = "" ] || [ "$acceptInstall" = "O" ] || [ "$acceptInstall" = "o" ]; then
+		apt download $package
+		cd ..
+		for f in `ls -C debs/`; do
+			dpkg-deb -x debs/$f ./dd/
+		done
+		cd dd/usr
+		for f in `find */* -print`; do
+			rm -rf $HOME/.local/$f
+		done
+		cd ..
+		rm -rf ./debs > /dev/null
+		rm -rf ./dd > /dev/null
+	else
+		cd ..
+		echo "Annulation."
+		rm -rf ./debs > /dev/null
+		rm -rf ./dd > /dev/null
+	fi
+else
+	echo "portableapt 0.2b (all)"
+	echo "Usage : portableapt commande"
+	echo ""
+	echo "portableapt est un outil en ligne de commande pour gérer les paquets."
+	echo "Il fournit des commandes pour chercher et gérer autant que pour"
+	echo "rechercher des informations à propos des paquets. Il fournit les mêmes"
+	echo "fonctions que les outils APT spécialisés, tels qu'apt-get et apt-cache,"
+	echo "mais dispose d'options plus adaptées pour une utilisation interactive."
+	echo "portableapt permet d'executer les commandes d'apt sans droits d'administrateur"
+	echo ""
+	echo "Commandes les plus utilisées :"
+  echo "  list - liste les paquets selon leur nom (utilise apt)"
+  echo "  search - cherche dans les descriptions de paquet (utilise apt)"
+  echo "  show - affiche les détails du paquet (utilise apt)"
+  echo "  install - installe / réinstalle un paquet"
+  echo "  remove - supprime des paquets"
+  echo "  upgrade - met à jour les paquets"
+  echo "  portable-upgrade - met à jour le portableapt depuis GitHub"
 fi

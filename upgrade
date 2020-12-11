@@ -1,0 +1,7 @@
+#!/bin/bash
+if test -f $HOME/.local/bin/portableapt; then
+  wget -q -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt
+  chmod +x $HOME/.local/bin/portableapt
+else
+  wget -qO - https://github.com/DocSystem/portableapt/raw/main/setup | bash -
+fi
