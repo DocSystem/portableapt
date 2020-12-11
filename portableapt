@@ -106,6 +106,8 @@ elif [ "$command" = "remove" ]; then
 		rm -rf ./debs > /dev/null
 		rm -rf ./dd > /dev/null
 	fi
+elif [ "$command" = "portable-upgrade" ]; then
+  wget -qO - https://github.com/DocSystem/portableapt/raw/main/upgrade | bash -
 else
 	echo "portableapt 0.2b (all)"
 	echo "Usage : portableapt commande"
@@ -121,8 +123,7 @@ else
   echo "  list - liste les paquets selon leur nom (utilise apt)"
   echo "  search - cherche dans les descriptions de paquet (utilise apt)"
   echo "  show - affiche les détails du paquet (utilise apt)"
-  echo "  install - installe / réinstalle un paquet"
+  echo "  install - installe / réinstalle / met à jour un paquet"
   echo "  remove - supprime des paquets"
-  echo "  upgrade - met à jour les paquets"
   echo "  portable-upgrade - met à jour le portableapt depuis GitHub"
 fi
