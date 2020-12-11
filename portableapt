@@ -1,10 +1,12 @@
 #!/bin/bash
 command=$1
 arguments=""
-for arg in $@; do
-  arguments="$arguments $arg"
-done
-arguments=`$arguments | cut -d" " --complement -f1`
+#for arg in $@; do
+#  arguments="$arguments $arg"
+#done
+#arguments=`$arguments | cut -d" " --complement -f1`
+#echo $arguments
+arguments=$2
 if [ "$command" = "list" ]; then
 	apt list
 elif [ "$command" = "search" ]; then
