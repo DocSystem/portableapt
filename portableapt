@@ -13,7 +13,7 @@ elif [ "$command" = "show" ]; then
 	apt show $2
 elif [ "$command" = "install" ]; then
 	package=$arguments
-	dependencies=""
+	allpackages="$package"
 	packagenum=0
 	dlsize=0
 	installsize=0
@@ -28,37 +28,28 @@ elif [ "$command" = "install" ]; then
 	tput sc
 	printf "Analyse des dépendances (0/$alliterations)"
 	for dependence in $alldependencies; do
-		isdependenceinstalled=`dpkg-query --list | grep -i $dependence`
+		isdependenceinstalled=`dpkg-query --list | grep -i "$dependence"`
 		iteration=`expr $iteration + 1`
 		tput rc;tput el
 		printf "Analyse des dépendances ($iteration/$alliterations)"
 		if [ "$isdependenceinstalled" = "" ]; then
-			pkgdlsize=`apt-cache show --no-all-versions $dependence | grep ^Size | cut -d':' -f2 | xargs`
-			pkginstallsize=`apt-cache show --no-all-versions $dependence | grep ^Installed-Size | cut -d':' -f2 | xargs`
-			if [ "$dependencies" = "" ]; then
-				dependencies="$dependence"
-				packagenum=1
-				dlsize="$pkgdlsize"
-				installsize="$pkginstallsize"
-			else
-				dependencies="$dependencies $dependence"
-				packagenum=`expr $packagenum + 1`
-				dlsize=`expr $pkgdlsize + $dlsize`
-				installsize=`expr $pkginstallsize + $installsize`
-			fi
+			allpackages="$allpackages $dependence"
+      packagenum=`expr $packagenum + 1`
 		fi
 	done
-	for currpkg in $package; do
-		pkgdlsize=`apt-cache show --no-all-versions $package | grep ^Size | cut -d':' -f2 | xargs`
-		pkginstallsize=`apt-cache show --no-all-versions $package | grep ^Installed-Size | cut -d':' -f2 | xargs`
-		dlsize=`expr $dlsize + $pkgdlsize`
-		installsize=`expr $installsize + $pkginstallsize`
-	done
+	pkgdlsize=`apt-cache show --no-all-versions $allpackages | grep ^Size | cut -d':' -f2 | xargs`
+	pkginstallsize=`apt-cache show --no-all-versions $allpackages | grep ^Installed-Size | cut -d':' -f2 | xargs`
+  for num in $pkgdlsize; do
+    dlsize=`expr $num + $dlsize`
+  done
+  for num in $pkginstallsize; do
+    installsize=`expr $num + $installsize`
+  done
 	dlsize=`expr $dlsize / 1048576`
 	installsize=`expr $installsize / 1024`
 	echo ""
 	echo "Les paquets suivants seront installés :"
-	echo "$package $dependencies"
+	echo "$allpackages"
 	echo "$packagenum paquets à installer."
 	echo "Il est nécessaire de prendre $dlsize Mo dans les archives."
 	echo "Après cette opération, $installsize Mo d'espace disque supplémentaire seront utilisés."
@@ -81,6 +72,7 @@ elif [ "$command" = "install" ]; then
 	fi
 elif [ "$command" = "remove" ]; then
 	package=$arguments
+  packagenum=`echo $package | wc -w`
 	rm -rf ./debs
 	rm -rf ./dd
 	mkdir debs
@@ -88,7 +80,7 @@ elif [ "$command" = "remove" ]; then
 	cd debs
 	echo "Les paquets suivants seront désinstallés :"
 	echo "$package"
-	echo "1 paquet à désinstaller."
+	echo "$packagenum paquets à désinstaller."
 	read -p "Souhaitez-vous continuer ? [O/n] " acceptInstall
 	if [ "$acceptInstall" = "" ] || [ "$acceptInstall" = "O" ] || [ "$acceptInstall" = "o" ]; then
 		apt download $package
