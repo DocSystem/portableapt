@@ -7,5 +7,5 @@ mkdir -p $HOME/.local/{bin,games,lib}
 ln -s $HOME/.local/games $HOME/.local/bin/games
 wget -q -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt
 chmod +x $HOME/.local/bin/portableapt
-echo "Portable APT is now ready\!"
+echo "Portable APT is now ready!"
 echo "On some operating systems, you will need to restart your session for changes to take effect, or at least restart terminal"
