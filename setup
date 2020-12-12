@@ -7,9 +7,9 @@ mkdir -p $HOME/.local/{bin,games,lib}
 wget -q -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt
 chmod +x $HOME/.local/bin/portableapt
 if [[ ":$PATH:" == *":$HOME/.local/bin:"* ]]; then
-  echo "Local bin directory is already in PATH!"
+  echo "Local bin directory is already in PATH"
 else
   echo "Local bin directory is not in PATH, adding it..."
   export PATH="$HOME/.local/bin:$PATH"
-  echo "Local bin directory is now in PATH!"
-echo "Portable APT is now ready!"
+  echo "Local bin directory is now in PATH"
+echo "Portable APT is now ready"
