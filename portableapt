@@ -114,7 +114,7 @@ elif [ "$command" = "portable-upgrade" ]; then
   wget -qO - https://github.com/DocSystem/portableapt/raw/main/upgrade | bash -
   echo "portableapt was successfully upgraded"
 else
-	echo "portableapt 0.2b (all)"
+	echo "portableapt 0.3b (all)"
 	echo "Usage : portableapt commande"
 	echo ""
 	echo "portableapt est un outil en ligne de commande pour gérer les paquets."
