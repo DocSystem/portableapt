@@ -70,6 +70,7 @@ elif [ "$command" = "install" ]; then
 			dpkg-deb -x debs/$f ./dd/
 		done
 		cp dd/usr/* -r ~/.local/
+		ln -s $HOME/.local/games/* $HOME/.local/bin/
 		rm -rf ./debs > /dev/null
 		rm -rf ./dd > /dev/null
 	else
