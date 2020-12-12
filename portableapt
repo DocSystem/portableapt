@@ -37,6 +37,8 @@ elif [ "$command" = "install" ]; then
       packagenum=`expr $packagenum + 1`
 		fi
 	done
+  echo ""
+  echo "Calcul de l'espace disque nécessaire..."
 	pkgdlsize=`apt-cache show --no-all-versions $allpackages | grep ^Size | cut -d':' -f2 | xargs`
 	pkginstallsize=`apt-cache show --no-all-versions $allpackages | grep ^Installed-Size | cut -d':' -f2 | xargs`
   for num in $pkgdlsize; do
@@ -102,9 +104,9 @@ elif [ "$command" = "remove" ]; then
 		rm -rf ./dd > /dev/null
 	fi
 elif [ "$command" = "portable-upgrade" ]; then
-  echo "Upgrading portableapt..."
+  echo "Mise à jour de portableapt..."
   wget -qO - https://github.com/DocSystem/portableapt/raw/main/upgrade | bash -
-  echo "portableapt was successfully upgraded"
+  echo "portableapt a été mis à jour !"
 else
 	echo "portableapt 0.3b (all)"
 	echo "Usage : portableapt commande"
