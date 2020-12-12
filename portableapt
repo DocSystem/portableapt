@@ -1,12 +1,10 @@
 #!/bin/bash
 command=$1
 arguments=""
-#for arg in $@; do
-#  arguments="$arguments $arg"
-#done
-#arguments=`$arguments | cut -d" " --complement -f1`
-#echo $arguments
-arguments=$2
+for arg in "$@"; do
+  arguments="$arguments $arg"
+done
+arguments=`echo $arguments | cut -d" " --complement -f1`
 if [ "$command" = "list" ]; then
 	apt list
 elif [ "$command" = "search" ]; then
@@ -50,10 +48,12 @@ elif [ "$command" = "install" ]; then
 			fi
 		fi
 	done
-	pkgdlsize=`apt-cache show --no-all-versions $package | grep ^Size | cut -d':' -f2 | xargs`
-	pkginstallsize=`apt-cache show --no-all-versions $package | grep ^Installed-Size | cut -d':' -f2 | xargs`
-	dlsize=`expr $dlsize + $pkgdlsize`
-	installsize=`expr $installsize + $pkginstallsize`
+	for currpkg in $package; do
+		pkgdlsize=`apt-cache show --no-all-versions $package | grep ^Size | cut -d':' -f2 | xargs`
+		pkginstallsize=`apt-cache show --no-all-versions $package | grep ^Installed-Size | cut -d':' -f2 | xargs`
+		dlsize=`expr $dlsize + $pkgdlsize`
+		installsize=`expr $installsize + $pkginstallsize`
+	done
 	dlsize=`expr $dlsize / 1048576`
 	installsize=`expr $installsize / 1024`
 	echo ""
