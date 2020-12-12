@@ -3,8 +3,8 @@ if test -f $HOME/.local/bin/portableapt; then
   rm -f $HOME/.local/bin/portableapt
 fi
 echo "Setting up Portable APT..."
-mkdir -p $HOME/.local/{bin,lib}
-ln -s $HOME/.local/bin $HOME/.local/games
+mkdir -p $HOME/.local/{bin,games,lib}
+ln -s $HOME/.local/games $HOME/.local/bin/games
 wget -q -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt
 chmod +x $HOME/.local/bin/portableapt
 echo "Portable APT is now ready\!"
