@@ -1,7 +1,7 @@
 # Portable APT
-A Portable APT (if you don't have admin rights)
+APT en version portable (pour fonctionner sans droits d'administrateur)
 
-To install execute this:
+Pour l'installer, executez ceci dans un terminal :
 ```sh
 wget -qO - https://github.com/DocSystem/portableapt/raw/main/setup | bash -
 ```
