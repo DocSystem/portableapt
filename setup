@@ -13,3 +13,5 @@ else
   export PATH="$HOME/.local/bin:$PATH"
   echo "Local bin directory is now in PATH"
 echo "Portable APT is now ready"
+fi
+
