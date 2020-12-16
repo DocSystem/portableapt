@@ -11,13 +11,13 @@ if test -f $HOME/.bashrc; then
   if grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.bashrc; then
     echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.bashrc
   fi
-else if test -f $HOME/.zshrc; then
+elif test -f $HOME/.zshrc; then
   if grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.zshrc; then
     echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
   fi
 fi
 echo "Portable APT a été ajouté au PATH !"
-if ! command -v portableapt &> /dev/null; then
+if [ ! command -v portableapt &> /dev/null ]; then
   echo "Veuillez redémarrer le terminal pour terminer l'installation de Portable APT"
 else
   echo "Portable APT est prêt !"
