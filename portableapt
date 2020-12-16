@@ -1,5 +1,4 @@
 #!/bin/bash
-command=$1
 arguments=""
 options=""
 for arg in "$@"; do
