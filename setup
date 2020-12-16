@@ -6,18 +6,18 @@ echo "Installation de Portable APT..."
 mkdir -p $HOME/.local/{bin,games,lib}
 wget -q -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt
 chmod +x $HOME/.local/bin/portableapt
-echo "Ajout de Portable APT au PATH..."
-if test -f $HOME/.bashrc; then
-  if grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.bashrc; then
-    echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.bashrc
+if ! command -v portableapt &> /dev/null; then
+  echo "Ajout de Portable APT au PATH..."
+  if test -f $HOME/.bashrc; then
+    if ! grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.bashrc; then
+      echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.bashrc
+    fi
+  elif test -f $HOME/.zshrc; then
+    if ! grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.zshrc; then
+      echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
+    fi
   fi
-elif test -f $HOME/.zshrc; then
-  if grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.zshrc; then
-    echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
-  fi
-fi
-echo "Portable APT a été ajouté au PATH !"
-if [ ! command -v portableapt &> /dev/null ]; then
+  echo "Portable APT a été ajouté au PATH !"
   echo "Veuillez redémarrer le terminal pour terminer l'installation de Portable APT"
 else
   echo "Portable APT est prêt !"
