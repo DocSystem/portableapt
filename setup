@@ -13,6 +13,8 @@ else if test -f $HOME/.zshrc; then
   echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
 fi
 echo "Portable APT a été ajouté au PATH !"
-if 
-echo "Portable APT est prêt !"
+if ! command -v portableapt &> /dev/null; then
+  echo "Veuillez redémarrer le terminal pour terminer l'installation de Portable APT"
+else
+  echo "Portable APT est prêt !"
 fi
