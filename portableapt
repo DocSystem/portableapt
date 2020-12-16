@@ -1,9 +1,15 @@
 #!/bin/bash
 command=$1
 arguments=""
+options=""
 for arg in "$@"; do
-  arguments="$arguments $arg"
+  if [[ $arg == -* ]]; then
+    options="$options $arg"
+  else
+    arguments="$arguments $arg"
+  fi
 done
+command=`echo $arguments | cut -d" " -f1`
 arguments=`echo $arguments | cut -d" " --complement -f1`
 if [ "$command" = "list" ]; then
 	apt list
@@ -55,7 +61,11 @@ elif [ "$command" = "install" ]; then
 	echo "$packagenum paquets à installer."
 	echo "Il est nécessaire de prendre $dlsize Mo dans les archives."
 	echo "Après cette opération, $installsize Mo d'espace disque supplémentaire seront utilisés."
-	read -p "Souhaitez-vous continuer ? [O/n] " acceptInstall
+  if [[ $options == *-y* ]] || [ $options == *--yes* ]; then
+    acceptInstall=o
+  else
+    read -p "Souhaitez-vous continuer ? [O/n] " acceptInstall
+  fi
 	if [ "$acceptInstall" = "" ] || [ "$acceptInstall" = "O" ] || [ "$acceptInstall" = "o" ]; then
 		apt download $package $dependencies
 		cd ..
@@ -83,7 +93,11 @@ elif [ "$command" = "remove" ]; then
 	echo "Les paquets suivants seront désinstallés :"
 	echo "$package"
 	echo "$packagenum paquets à désinstaller."
-	read -p "Souhaitez-vous continuer ? [O/n] " acceptInstall
+  if [[ $options == *-y* ]] || [ $options == *--yes* ]; then
+    acceptInstall=o
+  else
+    read -p "Souhaitez-vous continuer ? [O/n] " acceptInstall
+  fi
 	if [ "$acceptInstall" = "" ] || [ "$acceptInstall" = "O" ] || [ "$acceptInstall" = "o" ]; then
 		apt download $package
 		cd ..
@@ -108,8 +122,8 @@ elif [ "$command" = "portable-upgrade" ]; then
   wget -qO - https://github.com/DocSystem/portableapt/raw/main/upgrade | bash -
   echo "portableapt a été mis à jour !"
 else
-	echo "portableapt 0.3b (all)"
-	echo "Usage : portableapt commande"
+	echo "portableapt 0.4b (all)"
+	echo "Usage : portableapt [options] commande"
 	echo ""
 	echo "portableapt est un outil en ligne de commande pour gérer les paquets."
 	echo "Il fournit des commandes pour chercher et gérer autant que pour"
