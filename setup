@@ -12,7 +12,8 @@ if ! command -v portableapt &> /dev/null; then
     if ! grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.bashrc; then
       echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.bashrc
     fi
-  elif test -f $HOME/.zshrc; then
+  fi
+  if test -f $HOME/.zshrc; then
     if ! grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.zshrc; then
       echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
     fi
