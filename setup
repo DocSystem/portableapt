@@ -8,9 +8,13 @@ wget -q -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt
 chmod +x $HOME/.local/bin/portableapt
 echo "Ajout de Portable APT au PATH..."
 if test -f $HOME/.bashrc; then
-  echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.bashrc
+  grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.bashrc; then
+    echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.bashrc
+  fi
 else if test -f $HOME/.zshrc; then
-  echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
+  grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.zshrc; then
+    echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
+  fi
 fi
 echo "Portable APT a été ajouté au PATH !"
 if ! command -v portableapt &> /dev/null; then
