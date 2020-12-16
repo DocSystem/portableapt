@@ -60,7 +60,7 @@ elif [ "$command" = "install" ]; then
 	echo "$packagenum paquets à installer."
 	echo "Il est nécessaire de prendre $dlsize Mo dans les archives."
 	echo "Après cette opération, $installsize Mo d'espace disque supplémentaire seront utilisés."
-  if [[ $options == *-y* ]] || [ $options == *--yes* ]; then
+  if [[ $options == *-y* ]] || [[ $options == *--yes* ]]; then
     acceptInstall=o
   else
     read -p "Souhaitez-vous continuer ? [O/n] " acceptInstall
@@ -92,7 +92,7 @@ elif [ "$command" = "remove" ]; then
 	echo "Les paquets suivants seront désinstallés :"
 	echo "$package"
 	echo "$packagenum paquets à désinstaller."
-  if [[ $options == *-y* ]] || [ $options == *--yes* ]; then
+  if [[ $options == *-y* ]] || [[ $options == *--yes* ]]; then
     acceptInstall=o
   else
     read -p "Souhaitez-vous continuer ? [O/n] " acceptInstall
