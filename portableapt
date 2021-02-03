@@ -81,6 +81,36 @@ elif [ "$command" = "install" ]; then
 		rm -rf ./debs > /dev/null
 		rm -rf ./dd > /dev/null
 	fi
+elif [ "$command" = "install-deb" ]; then
+	package=$arguments
+	rm -rf ./debs
+	rm -rf ./dd
+	mkdir debs
+	mkdir dd
+	cd debs
+	echo ""
+	echo "Installation d'un paquet depuis $package :"
+  if [[ $options == *-y* ]] || [[ $options == *--yes* ]]; then
+    acceptInstall=o
+  else
+    read -p "Souhaitez-vous continuer ? [O/n] " acceptInstall
+  fi
+	if [ "$acceptInstall" = "" ] || [ "$acceptInstall" = "O" ] || [ "$acceptInstall" = "o" ]; then
+    cp $package ./
+		cd ..
+		for f in `ls -C debs/`; do
+			dpkg-deb -x debs/$f ./dd/
+		done
+		cp dd/usr/* -r ~/.local/
+		ln -s $HOME/.local/games/* $HOME/.local/bin/
+		rm -rf ./debs > /dev/null
+		rm -rf ./dd > /dev/null
+	else
+		cd ..
+		echo "Annulation."
+		rm -rf ./debs > /dev/null
+		rm -rf ./dd > /dev/null
+	fi
 elif [ "$command" = "remove" ]; then
 	package=$arguments
   packagenum=`echo $package | wc -w`
@@ -121,7 +151,7 @@ elif [ "$command" = "portable-upgrade" ]; then
   wget -qO - https://github.com/DocSystem/portableapt/raw/main/upgrade | bash -
   echo "portableapt a été mis à jour !"
 else
-	echo "portableapt 0.4b (all)"
+	echo "portableapt 0.5b (all)"
 	echo "Usage : portableapt [options] commande"
 	echo ""
 	echo "portableapt est un outil en ligne de commande pour gérer les paquets."
@@ -136,6 +166,7 @@ else
   echo "  search - cherche dans les descriptions de paquet (utilise apt)"
   echo "  show - affiche les détails du paquet (utilise apt)"
   echo "  install - installe / réinstalle / met à jour un paquet"
+  echo "  install-deb - installe / réinstalle / met à jour un paquet depuis un deb"
   echo "  remove - supprime des paquets"
   echo "  portable-upgrade - met à jour le portableapt depuis GitHub"
 fi
