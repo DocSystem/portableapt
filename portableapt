@@ -26,8 +26,10 @@ paptupgrade () {
 
 if grep -Fxq "AUTOUPDATE=ON" $HOME/.local/share/portableapt/portableapt.conf; then
   LastVer=`wget -qO - https://github.com/DocSystem/portableapt/raw/main/version | cat -`
-  if [ "$LastVer" != "$PAPTVERSION" ]; then
-    paptupgrade
+  if [ "$LastVer" != "" ]; then
+    if [ "$LastVer" != "$PAPTVERSION" ]; then
+      paptupgrade
+    fi
   fi
 fi
 
