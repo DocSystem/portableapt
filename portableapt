@@ -1,4 +1,36 @@
 #!/bin/bash
+PAPTVERSION=0.6
+
+if ! test -f $HOME/.local/share/portableapt/portableapt.conf; then mkdir -p $HOME/.local/share/portableapt; echo "AUTOUPDATE=ON" > $HOME/.local/share/portableapt/portableapt.conf; fi
+
+settings () {
+  if grep -Fxq "AUTOUPDATE=ON" $HOME/.local/share/portableapt/portableapt.conf; then AutoUpdate=ON; else AutoUpdate=OFF; fi
+  SETTINGS=$(whiptail --title "Portable APT" --nocancel --menu "Réglages de Portable APT" 16 78 4 \
+  "1" "Mise à jour automatique de Portable APT - $AutoUpdate" \
+  "2" "Quitter" 3>&1 1>&2 2>&3)
+  if [ "$SETTINGS" = "1" ]; then
+    if [ "$AutoUpdate" = "OFF" ]; then
+      sed -i 's/AUTOUPDATE=OFF/AUTOUPDATE=ON/g' $HOME/.local/share/portableapt/portableapt.conf
+    else
+      sed -i 's/AUTOUPDATE=ON/AUTOUPDATE=OFF/g' $HOME/.local/share/portableapt/portableapt.conf
+    fi
+    settings
+  fi
+}
+
+paptupgrade () {
+  echo "Mise à jour de portableapt..."
+  wget -qO - https://github.com/DocSystem/portableapt/raw/main/upgrade | bash -
+  echo "portableapt a été mis à jour !"
+}
+
+if grep -Fxq "AUTOUPDATE=ON" $HOME/.local/share/portableapt/portableapt.conf; then
+  LastVer=`wget -qO - https://github.com/DocSystem/portableapt/raw/main/version | cat -`
+  if [ "$LastVer" != "$PAPTVERSION" ]; then
+    paptupgrade
+  fi
+fi
+
 arguments=""
 options=""
 for arg in "$@"; do
@@ -72,7 +104,6 @@ elif [ "$command" = "install" ]; then
 			dpkg-deb -x debs/$f ./dd/
 		done
 		cp dd/usr/* -r ~/.local/
-		ln -s $HOME/.local/games/* $HOME/.local/bin/
 		rm -rf ./debs > /dev/null
 		rm -rf ./dd > /dev/null
 	else
@@ -102,7 +133,6 @@ elif [ "$command" = "install-deb" ]; then
 			dpkg-deb -x debs/$f ./dd/
 		done
 		cp dd/usr/* -r ~/.local/
-		ln -s $HOME/.local/games/* $HOME/.local/bin/
 		rm -rf ./debs > /dev/null
 		rm -rf ./dd > /dev/null
 	else
@@ -147,11 +177,11 @@ elif [ "$command" = "remove" ]; then
 		rm -rf ./dd > /dev/null
 	fi
 elif [ "$command" = "portable-upgrade" ]; then
-  echo "Mise à jour de portableapt..."
-  wget -qO - https://github.com/DocSystem/portableapt/raw/main/upgrade | bash -
-  echo "portableapt a été mis à jour !"
+  paptupgrade
+elif [ "$command" = "settings" ]; then
+  settings
 else
-	echo "portableapt 0.5b (all)"
+	echo "portableapt $PAPTVERSION (all)"
 	echo "Usage : portableapt [options] commande"
 	echo ""
 	echo "portableapt est un outil en ligne de commande pour gérer les paquets."
@@ -169,4 +199,5 @@ else
   echo "  install-deb - installe / réinstalle / met à jour un paquet depuis un deb"
   echo "  remove - supprime des paquets"
   echo "  portable-upgrade - met à jour le portableapt depuis GitHub"
+  echo "  settings - ouvre les réglages de portableapt"
 fi

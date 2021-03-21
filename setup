@@ -1,25 +1,69 @@
 #!/bin/bash
+makeInstall () {
+  mkdir -p $HOME/.local/{bin,lib}
+  if ! test -d $HOME/.local/games; then
+    ln -s $HOME/.local/bin $HOME/.local/games
+  fi
+  if ! test -f $HOME/.local/share/portableapt/portableapt.conf; then
+    mkdir -p $HOME/.local/share/portableapt
+    echo "AUTOUPDATE=ON" > $HOME/.local/share/portableapt/portableapt.conf
+  fi
+  wget --progress=dot -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt 2>&1 | grep "%" | sed -u -e "s,\.,,g" | awk '{print $2}' | sed -u -e "s,\%,,g" | whiptail --title "Portable APT Installer" --gauge "Téléchargement de Portable APT..." 8 78 0
+  chmod +x $HOME/.local/bin/portableapt
+  BashEnabled=OFF
+  ZshEnabled=OFF
+  KshEnabled=OFF
+  if test -f $HOME/.bashrc; then if grep -Fxq "export PATH=$HOME/.local/bin:\$PATH #portableapt" $HOME/.bashrc; then BashEnabled=ON; fi; fi
+  if test -f $HOME/.zshrc; then if grep -Fxq "export PATH=$HOME/.local/bin:\$PATH #portableapt" $HOME/.zshrc; then ZshEnabled=ON; fi; fi
+  if test -f $HOME/.kshrc; then if grep -Fxq "export PATH=$HOME/.local/bin:\$PATH #portableapt" $HOME/.kshrc; then KshEnabled=ON; fi; fi
+  SHELLS=$(whiptail --title "Portable APT Installer" --nocancel --checklist \
+  "Choisissez les Shells que vous souhaitez configurer pour Portable APT (Ajout au PATH)" 20 78 3 \
+  "bash" "Ajouter à .bashrc" $BashEnabled \
+  "zsh" "Ajouter à .zshrc" $ZshEnabled \
+  "ksh" "Ajouter à .kshrc" $KshEnabled 3>&1 1>&2 2>&3)
+  if [[ $SHELLS = *"bash"* ]]; then
+    if ! grep -Fxq "export PATH=$HOME/.local/bin:\$PATH #portableapt" $HOME/.bashrc; then
+      echo "export PATH=$HOME/.local/bin:\$PATH #portableapt" >> $HOME/.bashrc
+    fi
+  else
+    if test -f $HOME/.bashrc; then
+      if grep -Fxq "export PATH=$HOME/.local/bin:\$PATH #portableapt" $HOME/.bashrc; then
+        sed -i -e '/#portableapt/d' $HOME/.bashrc
+      fi
+    fi
+  fi
+  if [[ $SHELLS = *"zsh"* ]]; then
+    if ! grep -Fxq "export PATH=$HOME/.local/bin:\$PATH #portableapt" $HOME/.zshrc; then
+      echo "export PATH=$HOME/.local/bin:\$PATH #portableapt" >> $HOME/.zshrc
+    fi
+  else
+    if test -f $HOME/.zshrc; then
+      if grep -Fxq "export PATH=$HOME/.local/bin:\$PATH #portableapt" $HOME/.zshrc; then
+        sed -i -e '/#portableapt/d' $HOME/.zshrc
+      fi
+    fi
+  fi
+  if [[ $SHELLS = *"ksh"* ]]; then
+    if ! grep -Fxq "export PATH=$HOME/.local/bin:\$PATH #portableapt" $HOME/.kshrc; then
+      echo "export PATH=$HOME/.local/bin:\$PATH #portableapt" >> $HOME/.kshrc
+    fi
+  else
+    if test -f $HOME/.kshrc; then
+      if grep -Fxq "export PATH=$HOME/.local/bin:\$PATH #portableapt" $HOME/.kshrc; then
+        sed -i -e '/#portableapt/d' $HOME/.kshrc
+      fi
+    fi
+  fi
+  whiptail --title "Portable APT Installer" --msgbox "Installation terminée !\nVeuillez redémarrer le terminal pour terminer l'installation de Portable APT" 8 82
+}
+
 if test -f $HOME/.local/bin/portableapt; then
-  rm -f $HOME/.local/bin/portableapt
-fi
-echo "Installation de Portable APT..."
-mkdir -p $HOME/.local/{bin,games,lib}
-wget -q -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt
-chmod +x $HOME/.local/bin/portableapt
-if ! command -v portableapt &> /dev/null; then
-  echo "Ajout de Portable APT au PATH..."
-  if test -f $HOME/.bashrc; then
-    if ! grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.bashrc; then
-      echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.bashrc
-    fi
+  if (whiptail --title "Portable APT Installer" --defaultno --yesno "Portable APT est déjà installé ! Voulez-vous vraiment continuer ?" 8 78); then
+    rm -f $HOME/.local/bin/portableapt
+    makeInstall
+  else
+    echo "Installation annulée ! "
   fi
-  if test -f $HOME/.zshrc; then
-    if ! grep -Fxq "PATH=$HOME/.local/bin:\$PATH" $HOME/.zshrc; then
-      echo "PATH=$HOME/.local/bin:\$PATH" >> $HOME/.zshrc
-    fi
-  fi
-  echo "Portable APT a été ajouté au PATH !"
-  echo "Veuillez redémarrer le terminal pour terminer l'installation de Portable APT"
 else
-  echo "Portable APT est prêt !"
+  makeInstall
 fi
