@@ -1,5 +1,5 @@
 #!/bin/bash
-PAPTVERSION=0.6
+PAPTVERSION=0.7
 
 if ! test -f $HOME/.local/share/portableapt/portableapt.conf; then mkdir -p $HOME/.local/share/portableapt; echo "AUTOUPDATE=ON" > $HOME/.local/share/portableapt/portableapt.conf; fi
 
