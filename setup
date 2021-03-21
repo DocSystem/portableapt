@@ -57,13 +57,15 @@ makeInstall () {
   whiptail --title "Portable APT Installer" --msgbox "Installation terminée !\nVeuillez redémarrer le terminal pour terminer l'installation de Portable APT" 8 82
 }
 
-if test -f $HOME/.local/bin/portableapt; then
-  if (whiptail --title "Portable APT Installer" --defaultno --yesno "Portable APT est déjà installé ! Voulez-vous vraiment continuer ?" 8 78); then
-    rm -f $HOME/.local/bin/portableapt
-    makeInstall
+if (whiptail --title "Portable APT Installer" --yesno "Souhaitez vous installer Portable APT ?" 8 78); then
+  if test -f $HOME/.local/bin/portableapt; then
+    if (whiptail --title "Portable APT Installer" --defaultno --yesno "Portable APT est déjà installé ! Voulez-vous vraiment continuer ?" 8 78); then
+      rm -f $HOME/.local/bin/portableapt
+      makeInstall
+    else
+      echo "Installation annulée ! "
+    fi
   else
-    echo "Installation annulée ! "
+    makeInstall
   fi
-else
-  makeInstall
 fi
