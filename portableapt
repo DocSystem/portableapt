@@ -1,5 +1,5 @@
 #!/bin/bash
-export PAPTVERSION=0.8.2
+export PAPTVERSION=0.8.3
 export APT_CONFIG="$HOME/.local/share/portableapt/apt.conf.d/papt.conf"
 
 if ! test -d $HOME/.local/share/portableapt/; then
