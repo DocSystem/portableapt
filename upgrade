@@ -1,8 +1,13 @@
 #!/bin/bash
 if test -f $HOME/.local/bin/portableapt; then
   rm -f $HOME/.local/bin/portableapt
-  wget -q -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt
-  chmod +x $HOME/.local/bin/portableapt
+  if [ "$PAPTVERSION" != "" ]; then
+    wget -q -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt
+    chmod +x $HOME/.local/bin/portableapt
+  else
+    echo "Une réinstallation de Portable APT s'impose !"
+    wget -qO - https://github.com/DocSystem/portableapt/raw/main/setup | bash -
+  fi
 else
   wget -qO - https://github.com/DocSystem/portableapt/raw/main/setup | bash -
 fi
