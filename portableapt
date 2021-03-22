@@ -1,7 +1,15 @@
 #!/bin/bash
-PAPTVERSION=0.7
+PAPTVERSION=0.8
+export APT_CONFIG="$HOME/.local/share/portableapt/sources.list.d/papt.conf"
 
-if ! test -f $HOME/.local/share/portableapt/portableapt.conf; then mkdir -p $HOME/.local/share/portableapt; echo "AUTOUPDATE=ON" > $HOME/.local/share/portableapt/portableapt.conf; fi
+if ! test -d $HOME/.local/share/portableapt/; then
+  mkdir -p $HOME/.local/share/portableapt
+  mkdir $HOME/.local/share/portableapt/{apt.conf.d,sources.list.d,lists}
+  cp /etc/apt/apt.conf.d/* $HOME/.local/share/portableapt/apt.conf.d/
+  cp /etc/apt/sources.list.d/* $HOME/.local/share/portableapt/sources.list.d/
+  echo "AUTOUPDATE=ON" > $HOME/.local/share/portableapt/portableapt.conf
+  echo "Dir::Etc::Parts \"$HOME/.local/share/portableapt/apt.conf.d/\"\nDir::Etc::SourceParts \"$HOME/.local/share/portableapt/sources.list.d/\"\nDir::State::Lists \"$HOME/.local/share/portableapt/lists/\"" > $HOME/.local/share/portableapt/sources.list.d/papt.conf
+fi
 
 settings () {
   if grep -Fxq "AUTOUPDATE=ON" $HOME/.local/share/portableapt/portableapt.conf; then AutoUpdate=ON; else AutoUpdate=OFF; fi
@@ -182,6 +190,12 @@ elif [ "$command" = "portable-upgrade" ]; then
   paptupgrade
 elif [ "$command" = "settings" ]; then
   settings
+elif [ "$command" = "uninstall" ]; then
+  echo "Désinstallation de Portable APT..."
+  sed -i -e '/#portableapt/d' $HOME/.{bash,zsh,ksh}rc
+  rm $HOME/.local/bin/portableapt
+  rm -rf $HOME/.local/share/portableapt
+  echo "Portable APT a correctement été désinstallé"
 else
 	echo "portableapt $PAPTVERSION (all)"
 	echo "Usage : portableapt [options] commande"
@@ -194,12 +208,15 @@ else
 	echo "portableapt permet d'executer les commandes d'apt sans droits d'administrateur"
 	echo ""
 	echo "Commandes les plus utilisées :"
-  echo "  list - liste les paquets selon leur nom (utilise apt)"
-  echo "  search - cherche dans les descriptions de paquet (utilise apt)"
-  echo "  show - affiche les détails du paquet (utilise apt)"
+  echo "  list - liste les paquets selon leur nom"
+  echo "  search - cherche dans les descriptions de paquet"
+  echo "  show - affiche les détails du paquet"
   echo "  install - installe / réinstalle / met à jour un paquet"
   echo "  install-deb - installe / réinstalle / met à jour un paquet depuis un deb"
+  echo "  update - mets à jour les sources"
+  echo "  sources - affiche les sources"
   echo "  remove - supprime des paquets"
   echo "  portable-upgrade - met à jour le portableapt depuis GitHub"
   echo "  settings - ouvre les réglages de portableapt"
+  echo "  uninstall - désinstalle portableapt"
 fi
