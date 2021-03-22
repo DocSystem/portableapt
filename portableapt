@@ -151,6 +151,8 @@ elif [ "$command" = "install-deb" ]; then
 		rm -rf ./debs > /dev/null
 		rm -rf ./dd > /dev/null
 	fi
+elif [ "$command" = "update" ]; then
+  apt update
 elif [ "$command" = "remove" ]; then
 	package=$arguments
   packagenum=`echo $package | wc -w`
@@ -214,7 +216,6 @@ else
   echo "  install - installe / réinstalle / met à jour un paquet"
   echo "  install-deb - installe / réinstalle / met à jour un paquet depuis un deb"
   echo "  update - mets à jour les sources"
-  echo "  sources - affiche les sources"
   echo "  remove - supprime des paquets"
   echo "  portable-upgrade - met à jour le portableapt depuis GitHub"
   echo "  settings - ouvre les réglages de portableapt"
