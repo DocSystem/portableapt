@@ -56,6 +56,7 @@ makeInstall () {
       fi
     fi
   fi
+  $HOME/.local/bin/portableapt update | whiptail --title "Portable APT Installer" --gauge "Mise à jour des sources de Portable APT..." 8 78 0
   whiptail --title "Portable APT Installer" --msgbox "Installation terminée !\nVeuillez redémarrer le terminal pour terminer l'installation de Portable APT" 8 82
 }
 
