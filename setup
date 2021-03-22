@@ -5,11 +5,11 @@ makeInstall () {
     ln -s $HOME/.local/bin $HOME/.local/games
   fi
   mkdir -p $HOME/.local/share/portableapt
-  mkdir $HOME/.local/share/portableapt/{apt.conf.d,sources.list.d,lists}
+  mkdir $HOME/.local/share/portableapt/{apt.conf.d,sources.list.d,lists,cache}
   cp /etc/apt/apt.conf.d/* $HOME/.local/share/portableapt/apt.conf.d/
   cp /etc/apt/sources.list.d/* $HOME/.local/share/portableapt/sources.list.d/
   echo "AUTOUPDATE=ON" > $HOME/.local/share/portableapt/portableapt.conf
-  echo "Dir::Etc::Parts \"$HOME/.local/share/portableapt/apt.conf.d/\";Dir::Etc::SourceParts \"$HOME/.local/share/portableapt/sources.list.d/\";Dir::State::Lists \"$HOME/.local/share/portableapt/lists/\";" > $HOME/.local/share/portableapt/apt.conf.d/papt.conf
+  echo "Dir::Etc::Parts \"$HOME/.local/share/portableapt/apt.conf.d/\";Dir::Etc::SourceParts \"$HOME/.local/share/portableapt/sources.list.d/\";Dir::State::Lists \"$HOME/.local/share/portableapt/lists/\";Dir::Cache \"$HOME/.local/share/portableapt/cache/\";" > $HOME/.local/share/portableapt/apt.conf.d/papt.conf
   wget --progress=dot -O $HOME/.local/bin/portableapt https://github.com/DocSystem/portableapt/raw/main/portableapt 2>&1 | grep "%" | sed -u -e "s,\.,,g" | awk '{print $2}' | sed -u -e "s,\%,,g" | whiptail --title "Portable APT Installer" --gauge "Téléchargement de Portable APT..." 8 78 0
   chmod +x $HOME/.local/bin/portableapt
   BashEnabled=OFF
@@ -56,7 +56,13 @@ makeInstall () {
       fi
     fi
   fi
-  $HOME/.local/bin/portableapt update | whiptail --title "Portable APT Installer" --gauge "Mise à jour des sources de Portable APT..." 8 78 0
+  {
+    i=1
+    while read -r line; do
+      i=$(( $i + 1 ))
+      echo $i
+    done < <($HOME/.local/bin/portableapt update 2>/dev/null)
+  } | whiptail --title "Portable APT Installer" --gauge "Mise à jour des sources de Portable APT..." 8 78 0
   whiptail --title "Portable APT Installer" --msgbox "Installation terminée !\nVeuillez redémarrer le terminal pour terminer l'installation de Portable APT" 8 82
 }
 
